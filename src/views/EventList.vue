@@ -1,6 +1,13 @@
 <template>
   <h1>Events For Good</h1>
   <div class="events">
+    <div class="search-box"></div>
+    <Base-input
+      v-model="keyword"
+      type="text"
+      lable="Search ..."
+      @input="updateKeyword"
+    />
     <EventCard v-for="event in events" :key="event.id" :event="event" />
     <div class="pagination">
       <router-link
@@ -44,7 +51,9 @@ export default {
   data() {
     return {
       events: null,
-      totalEvents: 0 // <--- Added this to store totalEvents
+      totalEvents: 0,
+      keyword: null
+      // <--- Added this to store totalEvents
     }
   },
 
@@ -70,6 +79,26 @@ export default {
       .catch(() => {
         return { name: 'NetworkError' }
       })
+  },
+  methods: {
+    updateKeyword() {
+      var queryFunction
+      if (this.keyword === '') {
+        queryFunction = EventService.getEvents(3, 1)
+      } else {
+        queryFunction = EventService.getEventByKeyword(this.keyword, 3, 1)
+      }
+      queryFunction
+        .then((response) => {
+          this.events = response.data
+          console.log(this.events)
+          this.totalEvents = response.headers['x-total-count']
+          console.log(this.totalEvents)
+        })
+        .catch(() => {
+          return { name: 'NetworkError' }
+        })
+    }
   },
   computed: {
     hasNextPage() {
@@ -104,5 +133,8 @@ export default {
 
 #page-next {
   text-align: right;
+}
+.search-box {
+  width: 300px;
 }
 </style>
