@@ -1,13 +1,14 @@
 <template>
   <h1>Events For Good</h1>
   <div class="events">
-    <div class="search-box"></div>
+    <div class="search-box">
     <Base-input
       v-model="keyword"
       type="text"
       lable="Search ..."
       @input="updateKeyword"
     />
+    </div>
     <EventCard v-for="event in events" :key="event.id" :event="event" />
     <div class="pagination">
       <router-link
